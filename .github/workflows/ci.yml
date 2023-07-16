@@ -28,3 +28,10 @@ jobs:
       - name: Build Project
         run: |
           msbuild.exe DbLoader.csproj /p:platform="Any CPU" /p:configuration="Release"
+
+      - name: Upload build files
+        uses: actions/upload-artifact@v3
+          with:
+            name: release
+            path: D:\a\dbloader-git\dbloader-git\bin\Release\net472\dbloader.exe
+
