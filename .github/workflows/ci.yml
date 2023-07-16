@@ -31,7 +31,7 @@ jobs:
 
       - name: Upload build files
         uses: actions/upload-artifact@v3
-          with:
+        with:
             name: release
-            path: D:\a\dbloader-git\dbloader-git\bin\Release\net472\dbloader.exe
+            path: dbloader-git/bin/Release/net472/dbloader.exe
 
