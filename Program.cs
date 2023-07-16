@@ -258,7 +258,7 @@ namespace DbLoader
             {
                 using (StreamWriter sw = File.AppendText(sqlBat))
                 {
-                    sw.WriteLine(Path.Combine(cwd, "sqlite3.exe") + " -echo -interactive -init " + Path.Combine(cwd, ".sqliterc") + " %*");
+                    sw.WriteLine("\"" + Path.Combine(cwd, "sqlite3.exe") + "\"" + " -echo -interactive -init " + "\"" + Path.Combine(cwd, ".sqliterc") + "\"" + " %*");
                 }
             }
             Console.WriteLine("------------------------------------------------");
