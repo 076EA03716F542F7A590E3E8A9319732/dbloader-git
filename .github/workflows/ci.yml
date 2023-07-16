@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
             name: release
-            path: dbloader-git/bin/Release/net472/dbloader.exe
+            path: bin\Any CPU\Release\net472\dbloader.exe
 
