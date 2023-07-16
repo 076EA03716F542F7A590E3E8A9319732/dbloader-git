@@ -23,7 +23,7 @@ jobs:
         run: cd $GITHUB_WORKSPACE
 
       - name: Restore Packages
-        run: nuget restore Sandbox.sln
+        run: nuget restore DbLoader.csproj
 
       - name: Build Project
         run: |
