@@ -22,6 +22,10 @@ namespace DbLoader
                 Console.WriteLine("Precompiled Binaries for Windows");
                 Console.WriteLine("sqlite-tools-win32-x86-3420000.zip (1.93 MiB)");
                 Console.WriteLine("A bundle of command-line tools for managing SQLite database files, including the command-line shell program, the sqldiff.exe program, and the sqlite3_analyzer.exe program.");
+                
+                Console.WriteLine();
+                Console.WriteLine("Press any key to quit...");
+                Console.ReadKey();
                 return;
             }
             
