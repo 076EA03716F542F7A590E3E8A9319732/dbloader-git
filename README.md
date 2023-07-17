@@ -1,5 +1,7 @@
 Tool for decrypting _master.db
 
+Uses _master.db and klbsqlite3.dll found in game install directory
+
 # Requirements
 - Bleach Brave Souls installation
 
