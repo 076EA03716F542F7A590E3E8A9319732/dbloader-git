@@ -6,7 +6,20 @@ namespace DbLoader
     {
         public static void Main()
         {
-            EncryptDecrypt("_master.db");
+            StartLogging();
+            if (Logger is null || LogFile is null) { throw new InvalidOperationException("Unable to create log file"); }
+
+            try 
+            {
+                EncryptDecrypt("_master.db");
+            }
+            catch (Exception ex) 
+            {
+                LogWrite(ex.Message);
+            }
+            EndLogging();
+            Console.WriteLine("Press enter to continue...");
+            Console.ReadLine();
         }
 
         public static uint[] GetMasterLocalKeys()
@@ -38,8 +51,8 @@ namespace DbLoader
         public static void EncryptDecrypt(string dbName)
         {
             uint[] masterLocalKeys = GetMasterLocalKeys();
-            Console.WriteLine("Getting master database");
-            Console.WriteLine();
+            LogWrite("Getting master database");
+            LogWrite();
             var cwd = Directory.GetCurrentDirectory();
             var currentDrive = Directory.GetCurrentDirectory().Split('\\')[0];
             const string expectedDbPath = "\\Program Files (x86)\\Steam\\steamapps\\common\\BLEACH Brave Souls\\home\\persistent\\files";
@@ -47,9 +60,9 @@ namespace DbLoader
             
             if (!File.Exists(dbPath))
             {
-                Console.WriteLine($"_master.db not found in: {dbPath}");
+                LogWrite($"_master.db not found in: {dbPath}");
                 dbPath = currentDrive + Path.Combine(currentDrive, expectedDbPath, "_master.db");
-                Console.WriteLine($"Will use install directory: {dbPath}");
+                LogWrite($"Will use install directory: {dbPath}");
                 if (!File.Exists(dbPath))
                 {
                     throw new InvalidOperationException(
@@ -57,10 +70,9 @@ namespace DbLoader
                 }
                 File.Copy(dbPath, Path.Combine(cwd, "_master.db"));
                 dbPath = Path.Combine(cwd, "_master.db");
+                LogWrite($"Copied input file: {dbPath}");
             }
-            Console.WriteLine();
-            Console.WriteLine("------------------------------------------------");
-            Console.WriteLine();
+            LogWrite();
             
             BuildLCGStream(masterLocalKeys, dbPath, dbName);
         }
@@ -68,12 +80,15 @@ namespace DbLoader
         
         private static void BuildLCGStream(uint[] masterLocalKeys, string dbPath, string dbName)
         {
-            var fileOutName = "out" + dbName;
             var outPath = Path.Combine(Path.GetDirectoryName(dbPath), "out_master.db");
             using (var outfile = new FileStream(outPath, FileMode.OpenOrCreate))
             {
+                LogWrite($"Created output file: {outPath}");
                 using (var infile = new FileStream(dbPath, FileMode.Open))
                 {
+                    LogWrite($"Opened input file: {dbPath}");
+                    // debug
+                    EndLogging();
                     using (var lcgstream = new LCGStream(infile, masterLocalKeys[0], masterLocalKeys[1], masterLocalKeys[2]))
                     {
                         outfile.SetLength(0L);
@@ -105,6 +120,30 @@ namespace DbLoader
             }
             while (0 < num);
         }
+
+        private static void StartLogging() 
+        {
+            LogFile = File.Create(Path.Combine(Directory.GetCurrentDirectory(), $"log-{DateTime.Now.ToString("yyyy-MM-dd HH.mm.ss")}.txt"));
+            Logger = new StreamWriter(LogFile);
+        }
+
+        private static void EndLogging() 
+        {
+            if (Logger is null || LogFile is null) { return; }
+            Logger.Dispose();
+            LogFile.Dispose();
+        }
+
+        private static void LogWrite(string msg = "") 
+        {
+            if (Logger is null) { throw new InvalidOperationException("No Logger initialized"); }
+            Console.WriteLine(msg);
+            Logger.WriteLine(msg);
+        }
+
+        private static FileStream? LogFile;
+
+        private static StreamWriter? Logger;
         
     }
     
